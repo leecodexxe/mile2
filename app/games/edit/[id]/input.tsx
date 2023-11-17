@@ -105,7 +105,7 @@ const Input = (prop: any) => {
                                 </div>
                                 <div>
                                     <label className={styleForLable}>Game Type:</label>
-                                    <select id="cars" name="cars"
+                                    <select
                                         className={styleForInput}
                                         onChange={(e) => {
                                             setDataInput(prevState => ({

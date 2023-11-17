@@ -33,7 +33,15 @@ const Filters = () => {
         </div>
         <div className="w-full md:w-1/4 px-2 py-2">
             <label className={styleForLabel}>Game Type:</label>
-            <input type="text" className={styleForInput} onChange={(e) => { setGameType(e.target.value) }} />
+            <select id="cars" name="cars"
+                                        className={styleForInput}
+                                        onChange={(e) => { setGameType(e.target.value) }}
+                                    >   
+                                        <option value=""></option>
+                                        <option value="Slot">Slot</option>
+                                        <option value="Video Poker">Video Poker</option>
+                                        <option value="Table Game">Table Game</option>
+                                    </select>
         </div>
         <div className="w-full md:w-1/4 px-2 py-2">
             <label className={styleForLabelBlk}>Game:</label>

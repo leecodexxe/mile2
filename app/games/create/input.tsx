@@ -29,6 +29,7 @@ const Input = (prop: any) => {
         const data = await result.json()
         if (data.Create) {
             alert('Created successfully!')
+            router.refresh()
             router.push('/games')
         }
         else {
