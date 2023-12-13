@@ -11,7 +11,7 @@ const EditUser = (prop: any) => {
     const router = useRouter()
     const [dataInput, setDataInput] = useState({
         username: prop.data.username,
-        pw:'',
+        password:'',
         email: prop.data.email,
     })
     const datapass = async () => {
@@ -65,7 +65,7 @@ const EditUser = (prop: any) => {
                                         onChange={(e) => {
                                             setDataInput(prevState => ({
                                                 ...prevState,
-                                                pw: e.target.value
+                                                password: e.target.value
                                             }));
                                         }}
                                         />

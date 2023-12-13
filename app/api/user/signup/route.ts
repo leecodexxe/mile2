@@ -1,17 +1,35 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '../../../../server/db/client';
 import bcrypt from "bcrypt"
+import { prisma,supabase } from '../../../../server/db/client';
+import { verify } from '../route';
+
+
 export async function POST(req: Request, res: Response) {
   try {
-    let { username, pw, email } = await req.json();
+    let { username, password, email, id_token } = await req.json();
+    if (id_token){
+      var id = await verify(id_token)
+    }
     const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(pw, salt);
-    pw = hash
-    const data = await prisma.userdata.create({
-      data: { username, pw, email },
-    });
+    const hashpassword = bcrypt.hashSync(password, salt);
+    const hashpoverdif = bcrypt.hashSync(id,salt)
+    var found = await supabase.auth.signUp({
+      email:email,
+      password:password,
+      options:{
+        data:{
+          username:username
+        }
+      }
+  })
+    const data = await prisma.user.create({
+      data: {
+        user_id:found.data.user.id,
+        email: email,
+      }
+    })
     return NextResponse.json({ isCreate: true });
-  } catch (error:any) {
+  } catch (error: any) {
     console.log(error);
     if (error.code === 'P2002') {
       return NextResponse.json({ isCreate: false }, { status: 404 });

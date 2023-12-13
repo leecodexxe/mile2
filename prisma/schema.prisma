@@ -9,7 +9,7 @@ datasource db {
 
 model Gamedata {
   session_id    Int      @id(map: "gamedata_pk") @default(autoincrement())
-  user_id       Int
+  user_id       String   @db.Uuid
   casino        String   @db.VarChar
   machine       String   @db.VarChar
   session_start DateTime @db.Timestamp(6)
@@ -21,13 +21,13 @@ model Gamedata {
   win           Decimal? @db.Money
   loss          Decimal? @db.Money
   notes         String?
-  userdata      Userdata @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "gamedata_fk")
+  User          User?    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Cascade, map: "gamedata_fk")
 }
 
-model Userdata {
-  user_id  Int        @id(map: "userdata_pk") @default(autoincrement())
-  username String     @db.VarChar @unique
-  pw       String     @db.VarChar
-  email    String     @db.VarChar @unique
-  gamedata Gamedata[]
+model User {
+  user_id    String       @id(map: "user_pk") @default(uuid()) @db.Uuid
+  email      String       @unique @db.VarChar
+  token_id   String       @db.VarChar @unique
+  gamedata   Gamedata[]
+
 }

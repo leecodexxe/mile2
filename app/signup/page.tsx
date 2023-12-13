@@ -3,9 +3,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession, signIn, signOut } from 'next-auth/react'
 import '../../styles/globals.css'
-import Image from 'next/image'
-import background from '../../public/neonBoard.jpg'
-
+import { inputStyle, buttonStyle, lableStyle, textStyle, divStyle } from '../../styles/style'
+import PasswordCheck from './passwordCheck'
 
 
 export default function Page() {
@@ -14,12 +13,25 @@ export default function Page() {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [email, setEmail] = useState('')
+    const [passClicks, setPassClicks] = useState(false)
+    const [textColor,setTextColor] = useState({
+        cap:false,
+        num:false,
+        special:false,
+        length:false,
+    })
+    //fetch data from api route
     const datapass = () => {
         const fetchresdata = async () => {
             const result = await fetch('api/user/signup', {
                 method: 'POST',
                 headers: { "Content-type": "application/json; charset=UTF-8" },
-                body: JSON.stringify({ username: username, pw: password, email:session ? session.user.email : email})
+                body: JSON.stringify({
+                    username: username,
+                    password: password,
+                    email: session ? session.user.email : email,
+                    id_token: session ? session.id_token : ''
+                })
             })
             const data = await result.json()
             if (data.isCreate) {
@@ -30,82 +42,120 @@ export default function Page() {
         }
         fetchresdata()
     }
-    // if(session && session.user){
-    //         setUsername(session.user.name.split(' ').join(''))
-    //         setEmail(session.user.email)
-    // }
-    useEffect(()=>{
-        if(session && session.user){
+    //check if user login at SSO
+    useEffect(() => {
+        if (session && session.user) {
             setUsername(session.user.name.split(' ').join(''))
             setEmail(session.user.email)
-    }
-    },[])
+        }
+    }, [])
     return (
-        <main className='flex flex-col items-center justify-between'>
-            <div className='relative w-full'>
-                <div className='absolute -z-10 w-full'>
-                    <Image src={background} alt="background image" className='w-screen h-screen' width={1000} height={1000} />
-                </div>
-                <div>
-                    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 h-screen">
-                        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                        </div>
-                        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                            <h2 className="mt-10 text-center text-3xl font-bold leading-9 tracking-tight text-red-600">
-                                Create Your Account
-                            </h2>
-                        </div>
-                        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm text-center text-white">
-                            <form className="space-y-6"
-                                onSubmit={(e) => {
-                                    e.preventDefault()
-                                    if (username !== '' && password !== '') {
-                                        datapass()
-                                    }
-                                    else {
-                                        alert('Please Enter username or password')
-                                    }
-                                }}>
-                                <div>
-                                    <label className="block text-sm font-medium leading-6 text-gray-200">Username</label>
-                                    <input
-                                        className="block w-40 md:w-80 lg:w-96 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-lg sm:leading-6 indent-2 mx-auto"
-                                        type="text"
-                                        defaultValue={username}
-                                        onChange={(e) => setUsername(e.target.value)} 
-                                        required/>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium leading-6 text-gray-200">Password</label>
-                                    <input
-                                        className="block w-40 md:w-80 lg:w-96 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6 indent-2 mx-auto"
-                                        type="password"
-                                        onChange={(e) => setPassword(e.target.value)} 
-                                        required/>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium leading-6 text-gray-200">Email</label>
-                                    <input
-                                        className="block w-40 md:w-80 lg:w-96 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6 indent-2 mx-auto"
-                                        type="email"
-                                        defaultValue={email}
-                                        onChange={(e) => setEmail(e.target.value)} 
-                                        required/>
-                                </div>
-                                <button
-                                    className="flex w-40 md:w-80 lg:w-96 justify-center rounded-md bg-gradient-to-r from-red-600 via-purple-900 to-blue-700 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-gradient-to-l from-red-600 via-purple-900 to-blue-700 transition ease-in-out delay-100 hover:scale-105 mx-auto"
-                                    type='submit'>Sign Up</button>
-                                <button type="button"
-                                    className="flex w-40 md:w-80 lg:w-96 justify-center rounded-md bg-gradient-to-r from-red-600 via-purple-900 to-blue-700 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-gradient-to-l from-red-600 via-purple-900 to-blue-700 transition ease-in-out delay-100 hover:scale-105 mx-auto"
-                                    onClick={() => {
-                                        signOut({ callbackUrl: '/' })
-                                    }}>Login page</button>
-                            </form>
-                        </div>
+        <div className={divStyle}>
+            <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm text-center text-white">
+                <form className="space-y-6"
+                    onSubmit={(e) => {
+                        e.preventDefault()
+                        //check if user use special characters in the range
+                        if (username !== '' && password !== '') {
+                            const regex = new RegExp('[,./"_{}|;]')
+                            const passwordRule = regex.test(password)
+                            console.log(passwordRule)
+                            if(!passwordRule && textColor.cap && textColor.num && textColor.length && textColor.special){
+                                datapass()
+                            }else{
+                                alert('Please enter a capitalized letter a number and special characters(!@#$%^&*?~<>)')
+                            }
+                        }
+                        else {
+                            alert('Please Enter username or password')
+                        }
+                    }}>
+                    <h2 className={textStyle}>
+                        Create Your Account
+                    </h2>
+                    <div>
+                        <label className={lableStyle}>Username</label>
+                        <input
+                            className={inputStyle}
+                            type="text"
+                            defaultValue={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required />
                     </div>
-                </div>
+                    <div>
+                        <label className={lableStyle}>Password</label>
+                        <input
+                            className={inputStyle}
+                            type="password"
+                            onChange={
+                                (e) => {
+                                    setPassClicks(true)
+                                    setTextColor(checkPasswordrequired(e.target.value))
+                                    setPassword(e.target.value)
+                                }}
+                                required />
+                                {passClicks? <PasswordCheck textColor={textColor}/>: null}
+                    </div>
+                    <div>
+                        <label className={lableStyle}>Email</label>
+                        <input
+                            className={inputStyle}
+                            type="email"
+                            defaultValue={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required />
+                    </div>
+                    <button
+                        className={buttonStyle}
+                        type='submit'>Sign Up</button>
+                    <button type="button"
+                        className={buttonStyle}
+                        onClick={() => {
+                            signOut({ callbackUrl: '/' })
+                        }}>Login page</button>
+                </form>
             </div>
-        </main>
+        </div>
     )
 }
 
+function checkPasswordrequired(value) {
+    const isTrue = {
+        cap:false,
+        num:false,
+        special:false,
+        length:false,
+    }
+    const regexCap = /[A-Z]/
+    const regexNum = /[0-9]/
+    const regexSpecial = /[!@#$%^&*-+=?~<>]/
+    //capitalized 
+    if(regexCap.test(value)){
+        isTrue.cap = true
+    }else{
+            isTrue.cap = false
+    }
+    //Number
+    if(regexNum.test(value)){
+        isTrue.num = true
+    }
+    else{
+        isTrue.num = false
+    }
+    //special characters
+    console.log(regexSpecial.test(value))
+    if(regexSpecial.test(value)){
+        isTrue.special = true
+    }
+    else{
+        isTrue.special = false
+    }
+    //at least 8 character long
+    if(value.length >= 8){
+        isTrue.length = true
+    }else{
+        isTrue.length = false
+    }
+    console.log(isTrue)
+    return isTrue
+}

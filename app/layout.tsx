@@ -9,7 +9,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <title>Slot Tracker</title>
-      <body>
+      <body className="bg-[url('../public/neonBoard.jpg')] bg-cover">
         <Providers>
           {children}
         </Providers>

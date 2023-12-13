@@ -1,7 +1,7 @@
 -- CreateTable
 CREATE TABLE "Gamedata" (
     "session_id" SERIAL NOT NULL,
-    "user_id" INTEGER NOT NULL,
+    "user_id" UUID NOT NULL,
     "casino" VARCHAR NOT NULL,
     "machine" VARCHAR NOT NULL,
     "session_start" TIMESTAMP(6) NOT NULL,
@@ -18,13 +18,19 @@ CREATE TABLE "Gamedata" (
 );
 
 -- CreateTable
-CREATE TABLE "Userdata" (
-    "user_id" SERIAL NOT NULL,
-    "username" VARCHAR NOT NULL,
-    "pw" VARCHAR NOT NULL,
+CREATE TABLE "User" (
+    "user_id" UUID NOT NULL,
+    "email" VARCHAR NOT NULL,
+    "token_id" VARCHAR NOT NULL,
 
-    CONSTRAINT "userdata_pk" PRIMARY KEY ("user_id")
+    CONSTRAINT "user_pk" PRIMARY KEY ("user_id")
 );
 
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_token_id_key" ON "User"("token_id");
+
 -- AddForeignKey
-ALTER TABLE "Gamedata" ADD CONSTRAINT "gamedata_fk" FOREIGN KEY ("user_id") REFERENCES "Userdata"("user_id") ON DELETE CASCADE ON UPDATE NO ACTION;
+ALTER TABLE "Gamedata" ADD CONSTRAINT "gamedata_fk" FOREIGN KEY ("user_id") REFERENCES "User"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;

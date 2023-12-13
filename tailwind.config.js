@@ -1,3 +1,4 @@
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -6,7 +7,11 @@ module.exports = {
     './components/**/*.{js,jsx,ts,tsx}'
   ],
   theme: {
-    extend: {},
+    extend: {
+      backgroundImage:{
+        'hero-pattern': "url('/public/neonBoard.jpg')",
+      }
+    },
   },
   plugins: [],
 }

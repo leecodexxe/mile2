@@ -3,10 +3,10 @@ import { NextResponse } from 'next/server'
 
 
 //get all the data from data base
-export async function GET(req: Request, res: Response) {
-    const data = await prisma.gamedata.findMany()
-    return NextResponse.json({ data })
-}
+// export async function GET(req: Request, res: Response) {
+//     const data = await prisma.gamedata.findMany()
+//     return NextResponse.json({ data })
+// }
 
 export async function POST(req: Request, res: Response) {
     const { data } = await req.json()

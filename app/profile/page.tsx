@@ -5,7 +5,7 @@ import EditUser from './editUser'
 
 const Profile = async() => {
     const id = Number(cookies().get('user_id').value)
-    const data = await prisma.userdata.findFirst({
+    const data = await prisma.user.findFirst({
         where:{
             user_id:id
         }

@@ -33,7 +33,8 @@ const Page = async ({
     redirect('/')
   } else {
     const auth = cookies().get('user_id').value
-    const username = String(cookies().get('user_name').value)
+    console.log(auth)
+    const username = cookies().get('username').value
     const where = {
       user_id: Number(auth),
       casino,
